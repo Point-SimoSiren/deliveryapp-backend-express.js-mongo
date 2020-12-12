@@ -12,7 +12,7 @@ const categorySchema = mongoose.Schema({
 
 })
 
-userSchema.plugin(uniqueValidator)
+categorySchema.plugin(uniqueValidator)
 
 categorySchema.set('toJSON', {
     transform: (document, returnedObject) => {
