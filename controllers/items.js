@@ -5,10 +5,9 @@ const jwt = require('jsonwebtoken')
 // GET ALL PRODUCTS
 
 itemsRouter.get('/', async (request, response) => {
-    console.log("found here")
     const items = await Item
         .find({}).populate('category', { name: 1, description: 1 })
-
+    console.log(items)
     response.json(items.map(item => item.toJSON()))
 });
 
