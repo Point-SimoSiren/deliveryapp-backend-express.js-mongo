@@ -2,14 +2,14 @@ const itemsRouter = require('express').Router()
 const Item = require('../models/item')
 const jwt = require('jsonwebtoken')
 
-// GET ALL PRODUCTS
+itemsRouter.get('/', async (req, res) => {
 
-itemsRouter.get('/', async (request, response) => {
     const items = await Item
-        .find({}).populate('category', { name: 1, description: 1 })
+        .find({}).populate('category', { name: 1 })
     console.log(items)
-    response.json(items.map(item => item.toJSON()))
-});
+    res.json(items.map(item => item.toJSON()))
+})
+
 
 // GET ONE PRODUCT BY ID
 
@@ -40,7 +40,6 @@ const getTokenFrom = request => {
 
 itemsRouter.post('/', async (request, response, next) => {
     const body = request.body
-
     const token = getTokenFrom(request)
 
     try {
@@ -48,15 +47,18 @@ itemsRouter.post('/', async (request, response, next) => {
         if (!token || !decodedToken.id) {
             return response.status(401).json({ error: 'token missing or invalid' })
         }
-
+    } catch (exception) {
+        next(exception)
+    }
+    try {
         const newItem = new Item({
-            name: body.title,
-            package: body.author,
-            price: body.url,
-            active: body.likes,
+            name: body.name,
+            package: body.package,
+            price: body.price,
+            active: body.active,
             manufacturer: body.manufacturer,
             description: body.description,
-            category: body.category
+            category: body.categoryId
         })
 
         const savedItem = await newItem.save()
@@ -65,6 +67,5 @@ itemsRouter.post('/', async (request, response, next) => {
         next(exception)
     }
 })
-
 
 module.exports = itemsRouter

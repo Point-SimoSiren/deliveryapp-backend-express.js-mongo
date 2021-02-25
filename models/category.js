@@ -3,13 +3,17 @@ const uniqueValidator = require('mongoose-unique-validator')
 
 const categorySchema = mongoose.Schema({
     name: {
-        type: String,
-        unique: true
+        type: String
     },
     description: {
         type: String
     },
-
+    items: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Item'
+        }
+    ],
 })
 
 categorySchema.plugin(uniqueValidator)

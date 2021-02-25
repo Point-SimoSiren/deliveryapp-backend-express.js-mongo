@@ -3,8 +3,7 @@ const uniqueValidator = require('mongoose-unique-validator')
 
 const itemSchema = mongoose.Schema({
     name: {
-        type: String,
-        required: [true, 'Name is mandatory for product items']
+        type: String
     },
     package: {
         type: String
@@ -25,7 +24,7 @@ const itemSchema = mongoose.Schema({
     {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category'
-    },
+    }
 })
 
 itemSchema.plugin(uniqueValidator)

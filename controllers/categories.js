@@ -5,23 +5,12 @@ const jwt = require('jsonwebtoken')
 // GET ALL PRODUCT CATEGORIES
 
 categoriesRouter.get('/', async (request, response) => {
+
     const categories = await Category
-        .find({})
+        .find({}).populate('items')
 
     response.json(categories.map(category => category.toJSON()))
-});
 
-categoriesRouter.get('/:id', async (request, response, next) => {
-    try {
-        const category = await Category.findById(request.params.id)
-        if (category) {
-            response.json(category.toJSON())
-        } else {
-            response.status(404).end()
-        }
-    } catch (exception) {
-        next(exception)
-    }
 })
 
 // TOKEN PROCESSOR FUNCTION
@@ -46,10 +35,15 @@ categoriesRouter.post('/', async (request, response, next) => {
         if (!token || !decodedToken.id) {
             return response.status(401).json({ error: 'token missing or invalid' })
         }
+    } catch (exception) {
+        next(exception)
+    }
 
+    try {
         const newCategory = new Category({
             name: body.name,
-            description: body.description
+            description: body.description,
+            items: []
         })
 
         const savedCategory = await newCategory.save()
@@ -96,9 +90,12 @@ categoriesRouter.put('/:id', async (request, response, next) => {
         next(exception)
     }
 
+    console.log(request.params.id)
+
     const category = {
         name: body.name,
-        description: body.description
+        description: body.description,
+        items: body.items
     }
 
     try {
